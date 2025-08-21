@@ -1,0 +1,167 @@
+import os
+import time
+import hmac
+import hashlib
+import logging
+import json
+from pathlib import Path
+from typing import Optional
+
+from flask import Flask, request, abort, jsonify
+from dotenv import load_dotenv
+import jwt  # PyJWT
+import requests
+
+# Load environment variables
+load_dotenv()
+
+APP_ID = os.getenv("APP_ID")
+PRIVATE_KEY_PATH = os.getenv("PRIVATE_KEY_PATH")
+WEBHOOK_SECRET = os.getenv("WEBHOOK_SECRET", "")
+ENTERPRISE_HOSTNAME = os.getenv("ENTERPRISE_HOSTNAME")  # e.g. ghe.example.com
+PORT = int(os.getenv("PORT", "3000"))
+MESSAGE_PATH = os.getenv("MESSAGE_PATH", "message.md")
+LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO").upper()
+
+if not APP_ID or not PRIVATE_KEY_PATH or not WEBHOOK_SECRET:
+    raise RuntimeError("Missing one of required env vars: APP_ID, PRIVATE_KEY_PATH, WEBHOOK_SECRET")
+
+try:
+    private_key = Path(PRIVATE_KEY_PATH).read_text(encoding="utf-8")
+except FileNotFoundError as e:
+    raise RuntimeError(f"Private key file not found at '{PRIVATE_KEY_PATH}'") from e
+except Exception as e:
+    raise RuntimeError(f"Failed reading private key: {e}") from e
+
+message_for_new_prs = Path(MESSAGE_PATH).read_text(encoding="utf-8") if Path(MESSAGE_PATH).is_file() else "Thanks for your pull request!"  # fallback
+
+# Base API URL (public GitHub or GHES)
+if ENTERPRISE_HOSTNAME:
+    API_BASE = f"https://{ENTERPRISE_HOSTNAME}/api/v3"
+else:
+    API_BASE = "https://api.github.com"
+
+# Configure logging
+logging.basicConfig(level=getattr(logging, LOG_LEVEL, logging.INFO), format="%(asctime)s %(levelname)s %(message)s")
+logger = logging.getLogger("github-app")
+
+app = Flask(__name__)
+
+
+def create_jwt(app_id: str, key: str) -> str:
+    """Create a JWT for the GitHub App authentication (valid 10 minutes)."""
+    now = int(time.time())
+    payload = {
+        "iat": now - 60,        # issued at time (backdate 60s to allow clock drift)
+        "exp": now + 9 * 60,    # max 10 minutes; use 9 to be safe
+        "iss": app_id
+    }
+    encoded = jwt.encode(payload, key, algorithm="RS256")
+    return encoded
+
+
+def get_app_name() -> Optional[str]:
+    try:
+        token = create_jwt(APP_ID, private_key)
+        r = requests.get(f"{API_BASE}/app", headers={
+            "Authorization": f"Bearer {token}",
+            "Accept": "application/vnd.github+json"
+        }, timeout=10)
+        if r.ok:
+            return r.json().get("name")
+        logger.warning("Failed to get app metadata: %s %s", r.status_code, r.text)
+    except Exception as e:
+        logger.warning("Error getting app name: %s", e)
+    return None
+
+
+def verify_signature(raw_body: bytes, signature_header: str) -> bool:
+    """Verify GitHub webhook signature (X-Hub-Signature-256)."""
+    if not signature_header or not signature_header.startswith("sha256="):
+        return False
+    expected = hmac.new(WEBHOOK_SECRET.encode(), raw_body, hashlib.sha256).hexdigest()
+    provided = signature_header.split("=", 1)[1]
+    # constant-time compare
+    return hmac.compare_digest(expected, provided)
+
+
+def create_installation_token(installation_id: int) -> str:
+    jwt_token = create_jwt(APP_ID, private_key)
+    url = f"{API_BASE}/app/installations/{installation_id}/access_tokens"
+    r = requests.post(url, headers={
+        "Authorization": f"Bearer {jwt_token}",
+        "Accept": "application/vnd.github+json"
+    }, timeout=15)
+    if not r.ok:
+        raise RuntimeError(f"Failed to create installation token: {r.status_code} {r.text}")
+    return r.json()["token"]
+
+
+def post_pr_comment(owner: str, repo: str, pr_number: int, body: str, installation_id: int):
+    token = create_installation_token(installation_id)
+    url = f"{API_BASE}/repos/{owner}/{repo}/issues/{pr_number}/comments"
+    r = requests.post(url, headers={
+        "Authorization": f"token {token}",
+        "Accept": "application/vnd.github+json"
+    }, json={"body": body}, timeout=15)
+    if not r.ok:
+        raise RuntimeError(f"Failed to create comment: {r.status_code} {r.text}")
+    return r.json()
+
+
+@app.route("/api/webhook", methods=["POST"])
+def handle_webhook():
+    raw = request.get_data()  # raw payload (bytes)
+    signature_header = request.headers.get("X-Hub-Signature-256", "")
+
+    if not verify_signature(raw, signature_header):
+        logger.warning("Signature verification failed")
+        abort(401, description="Invalid signature")
+
+    try:
+        event = request.headers.get("X-GitHub-Event")
+        payload = request.get_json(force=True, silent=False)
+    except Exception:
+        abort(400, description="Invalid JSON")
+
+    logger.debug("Event received: %s action=%s", event, payload.get("action"))
+
+    if event == "pull_request" and payload.get("action") == "opened":
+        pr = payload.get("pull_request", {})
+        repo = payload.get("repository", {})
+        installation = payload.get("installation", {})
+        pr_number = pr.get("number")
+        owner_login = repo.get("owner", {}).get("login")
+        repo_name = repo.get("name")
+        installation_id = installation.get("id")
+        logger.info("Received pull_request.opened for #%s (%s/%s) installation %s", pr_number, owner_login, repo_name, installation_id)
+
+        try:
+            comment = post_pr_comment(owner_login, repo_name, pr_number, message_for_new_prs, installation_id)
+            logger.info("Comment created: %s", comment.get("html_url"))
+        except Exception as e:
+            logger.error("Error creating comment: %s", e)
+            return jsonify({"status": "error", "error": str(e)}), 500
+    else:
+        logger.debug("Ignoring event / action combination")
+
+    return jsonify({"status": "ok"})
+
+
+@app.route("/health", methods=["GET"])
+def health():  # simple health/diagnostic endpoint
+    return jsonify({
+        "status": "ok",
+        "app_id": APP_ID,
+        "api_base": API_BASE,
+        "message_loaded": Path(MESSAGE_PATH).is_file(),
+    })
+
+
+if __name__ == "__main__":
+    app_name = get_app_name()
+    if app_name:
+        logger.info("Authenticated as '%s'", app_name)
+    logger.info("Listening on http://localhost:%s/api/webhook", PORT)
+    logger.info("Health endpoint at http://localhost:%s/health", PORT)
+    app.run(host="0.0.0.0", port=PORT)
