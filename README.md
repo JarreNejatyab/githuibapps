@@ -12,10 +12,6 @@ This sample app showcases how webhooks can be used with a GitHub App's installat
 - (For local development) A tunnel to expose your local server to the internet (e.g. [smee](https://smee.io/), [ngrok](https://ngrok.com/) or [cloudflared](https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/install-and-setup/tunnel-guide/local/))
 - Your GitHub App Webhook must be configured to receive events at a URL that is accessible from the internet.
 
-### Node.js version
-
-- Node.js 20 or higher
-
 ### Python version (alternative implementation)
 
 - Python 3.11 or higher
@@ -41,17 +37,6 @@ WEBHOOK_SECRET=your_webhook_secret
 # Optional for GHES
 # ENTERPRISE_HOSTNAME=ghe.example.com
 ```
-
-### Node.js path
-
-1. Install dependencies:
-  ```
-  npm install
-  ```
-2. Start the server:
-  ```
-  npm run server
-  ```
 
 ### Python path (alternative)
 
