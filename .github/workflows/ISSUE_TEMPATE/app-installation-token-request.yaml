@@ -1,0 +1,911 @@
+name: App Installation-token request
+description: Template to request for an App installation token
+title: "[New App Installation Token Request]"
+labels: "[app-installation-token-request]"
+assignees: 
+  - '@CBA-General/source-code-management-squad-write'
+body:
+  - type: markdown
+    attributes:
+      value: "Please provide the details below to request for an App installation access token:"
+  - type: input
+    id: org
+    attributes:
+      label: Organisation
+      description: In which Organisation should the app be created in?
+      placeholder: ex. CBA-General
+    validations:
+      required: true
+  - type: input
+    id: Product
+    attributes:
+      label: Product-name/Service-name
+      description: Please provide your high level ProductName or Service Name, it will be used for naming the App
+      placeholder: ex. TeamCity
+    validations:
+      required: true
+  - type: textarea
+    id: repos
+    attributes:
+      label: Repository names
+      description: Name of the repos, the app should have access to
+    validations:
+      required: true
+  - type: input
+    id: approval
+    attributes:
+      label: OrgOwner Approval
+      description: Approval from the org owner if org is not CBA_General. Please specify `@owner` so that they can leave an approval comment. Please use https://commbank.sharepoint.com/sites/onecba-engineering/SitePages/GitHub-Enterprise-Cloud-Organisation-List.aspx to find the owners
+    validations:
+      required: false
+  - type: input
+    id: app-manager
+    attributes:
+      label: App Manager
+      description: Being the requester of this App, you will be given App manager access by default.
+    validations:
+      required: false
+  - type: markdown
+    id: permissions-header
+    attributes:
+      value: "## Permissions"
+  - type: markdown
+    id: permissions-header-msg
+    attributes:
+      value: "Choose the right permissions required for your App using the dropdown below for all categories, default value is NO Access"
+  - type: markdown
+    id: repository-permissions-header
+    attributes:
+      value: "### Repository Level Permissions"
+  - type: dropdown
+    id: Actions
+    attributes:
+      label: Repository - Actions
+      description: Workflows, workflow runs and artifacts.
+      options:
+           - 'No_Access'
+           - 'Read_only'
+           - 'read-and-write'
+      default: 0
+  - type: dropdown
+    id: Administration
+    attributes:
+      label: Repository - Administration
+      description: Repository creation, deletion, settings, teams, and collaborators.
+      options:
+         
+           - 'No_Access'
+         
+           - 'Read_only'
+         
+           - 'read-and-write'
+      default: 0
+  - type: dropdown
+    id: Attestations
+    attributes:
+      label: Attestations
+      description: Create and retrieve attestations for a repository
+      options:
+           - 'No_Access'
+           - 'Read_only'
+           - 'read-and-write'
+      default: 0
+  - type: dropdown
+    id: Checks
+    attributes:
+      label: Checks
+      description: Checks on code
+      options:
+         
+           - 'No_Access'
+         
+           - 'Read_only'
+         
+           - 'read-and-write'
+      default: 0
+  - type: dropdown
+    id: Code-scanning-alerts
+    attributes:
+      label: Code scanning alerts
+      description: View and manage code scanning alerts.
+      options:
+         
+           - 'No_Access'
+         
+           - 'Read_only'
+         
+           - 'read-and-write'
+      default: 0
+  - type: dropdown
+    id: Codespaces
+    attributes:
+      label: Codespaces
+      description: Create, edit, delete and list Codespaces.
+      options:
+         
+           - 'No_Access'
+         
+           - 'Read_only'
+         
+           - 'read-and-write'
+      default: 0
+  - type: dropdown
+    id: Codespaces-lifecycle-admin
+    attributes:
+      label: Codespaces lifecycle admin 
+      description: Manage the lifecycle of Codespaces, including starting and stopping.
+      options:
+         
+           - 'No_Access'
+         
+           - 'Read_only'
+         
+           - 'read-and-write'
+      default: 0
+  - type: dropdown
+    id: Codespaces-metadata
+    attributes:
+      label: Codespaces-metadata
+      description: Access Codespaces metadata including the devcontainers and machine type.
+      options:
+         
+           - 'No_Access'
+         
+           - 'Read_only'
+         
+           - 'read-and-write'
+      default: 0
+  - type: dropdown
+    id: Codespaces-secrets
+    attributes:
+      label: Codespaces secrets
+      description: Restrict Codespaces user secrets modifications to specific repositories.
+      options:
+         
+           - 'No_Access'
+         
+           - 'Read_only'
+         
+           - 'read-and-write'
+      default: 0
+  - type: dropdown
+    id: Commit-statuses
+    attributes:
+      label: Commit statuses
+      description: Commit statuses.
+      options:
+         
+           - 'No_Access'
+         
+           - 'Read_only'
+         
+           - 'read-and-write'
+      default: 0
+  - type: dropdown
+    id: Contents
+    attributes:
+      label: Contents 
+      description: Repository contents, commits, branches, downloads, releases, and merges.
+      options:
+         
+           - 'No_Access'
+         
+           - 'Read_only'
+         
+           - 'read-and-write'
+      default: 0
+  - type: dropdown
+    id: Custom-properties 
+    attributes:
+      label: Custom properties
+      description: View and set values for a repository's custom properties, when allowed by the property.
+      options:
+         
+           - 'No_Access'
+         
+           - 'Read_only'
+         
+           - 'read-and-write'
+      default: 0
+  - type: dropdown
+    id: Dependabot-alerts
+    attributes:
+      label: Dependabot alerts
+      description: Retrieve Dependabot alerts.
+      options:
+         
+           - 'No_Access'
+         
+           - 'Read_only'
+         
+           - 'read-and-write'
+      default: 0
+  - type: dropdown
+    id: Dependabot-secrets
+    attributes:
+      label: Dependabot secrets
+      description: Manage Dependabot repository secrets.
+      options:
+         
+           - 'No_Access'
+         
+           - 'Read_only'
+         
+           - 'read-and-write'
+      default: 0
+  - type: dropdown
+    id: Deployments
+    attributes:
+      label: Deployments
+      description: Deployments and deployment statuses.
+      options:
+         
+           - 'No_Access'
+         
+           - 'Read_only'
+         
+           - 'read-and-write'
+      default: 0
+  - type: dropdown
+    id: Discussions
+    attributes:
+      label: Discussions
+      description: Discussions and related comments and labels.
+      options:
+         
+           - 'No_Access'
+         
+           - 'Read_only'
+         
+           - 'read-and-write'
+      default: 0
+  - type: dropdown
+    id: Environments
+    attributes:
+      label: Environments
+      description: Manage repository environments.
+      options:
+         
+           - 'No_Access'
+         
+           - 'Read_only'
+         
+           - 'read-and-write'
+      default: 0
+  - type: dropdown
+    id: Issues
+    attributes:
+      label: Issues
+      description: Issues and related comments, assignees, labels, and milestones.
+      options:
+         
+           - 'No_Access'
+         
+           - 'Read_only'
+         
+           - 'read-and-write'
+      default: 0
+  - type: dropdown
+    id: Merge-queues 
+    attributes:
+      label: Merge queues 
+      description: Manage a repository's merge queues
+      options:
+         
+           - 'No_Access'
+         
+           - 'Read_only'
+         
+           - 'read-and-write'
+      default: 0
+  - type: dropdown
+    id: Metadata
+    attributes:
+      label: Metadata(mandatory Read-only)
+      description: Search repositories, list collaborators, and access repository metadata.
+      options:
+           - 'No_Access'
+           - 'Read_only'
+      default: 1
+  - type: dropdown
+    id: Packages
+    attributes:
+      label: Packages
+      description: Packages published to the GitHub Package Platform.
+      options:
+         
+           - 'No_Access'
+         
+           - 'Read_only'
+         
+           - 'read-and-write'
+      default: 0
+  - type: dropdown
+    id: Pages 
+    attributes:
+      label: Pages
+      description: Retrieve Pages statuses, configuration, and builds, as well as create new builds.
+      options:
+         
+           - 'No_Access'
+         
+           - 'Read_only'
+         
+           - 'read-and-write'
+      default: 0
+  - type: dropdown
+    id: Projects
+    attributes:
+      label: Projects
+      description: Manage classic projects within a repository.
+      options:
+         
+           - 'No_Access'
+         
+           - 'Read_only'
+         
+           - 'read-and-write'
+           - 'Admin'
+      default: 0
+  - type: dropdown
+    id: Pull-requests
+    attributes:
+      label: Pull requests
+      description: Pull requests and related comments, assignees, labels, milestones, and merges.
+      options:
+         
+           - 'No_Access'
+         
+           - 'Read_only'
+         
+           - 'read-and-write'
+      default: 0
+  - type: dropdown
+    id: Repository-security-advisories
+    attributes:
+      label: Repository security advisories 
+      description: View and manage repository security advisories.
+      options:
+         
+           - 'No_Access'
+         
+           - 'Read_only'
+         
+           - 'read-and-write'
+      default: 0
+  - type: dropdown
+    id: Secret-scanning-alerts
+    attributes:
+      label: Secret scanning alerts
+      description: View and manage secret scanning alerts.
+      options:
+         
+           - 'No_Access'
+         
+           - 'Read_only'
+         
+           - 'read-and-write'
+      default: 0
+  - type: dropdown
+    id: Secrets
+    attributes:
+      label: Secrets
+      description: Manage Actions repository secrets.
+      options:
+         
+           - 'No_Access'
+         
+           - 'Read_only'
+         
+           - 'read-and-write'
+      default: 0
+  - type: dropdown
+    id: Single-file
+    attributes:
+      label: Single file 
+      description: Manage just a single file.
+      options:
+         
+           - 'No_Access'
+         
+           - 'Read_only'
+         
+           - 'read-and-write'
+      default: 0
+  - type: dropdown
+    id: Variables
+    attributes:
+      label: Variables
+      description: Manage Actions repository variables.
+      options:
+         
+           - 'No_Access'
+         
+           - 'Read_only'
+         
+           - 'read-and-write'
+      default: 0
+  - type: dropdown
+    id: Webhooks
+    attributes:
+      label: Webhooks
+      description: PManage the post-receive hooks for a repository.
+      options:
+         
+           - 'No_Access'
+         
+           - 'Read_only'
+         
+           - 'read-and-write'
+      default: 0
+  - type: dropdown
+    id: Workflows
+    attributes:
+      label: Workflows 
+      description: Update GitHub Action workflow files.
+      options:
+           - 'No_Access'
+           - 'read-and-write'
+      default: 0
+      
+  - type: markdown
+    id: organisation-permissions-header
+    attributes:
+      value: "### Organization Level Permissions"
+  - type: dropdown
+    id: Org-Administration
+    attributes:
+      label: Organisation Administration
+      description: Manage access to an organization.
+      options:
+         
+           - 'No_Access'
+         
+           - 'Read_only'
+         
+           - 'read-and-write'
+      default: 0
+  - type: dropdown
+    id: Blocking-users
+    attributes:
+      label: Blocking users
+      description: View and manage users blocked by the organization.
+      options:
+         
+           - 'No_Access'
+         
+           - 'Read_only'
+         
+           - 'read-and-write'
+      default: 0
+  - type: dropdown
+    id: Custom-organization-roles 
+    attributes:
+      label: Custom organization rolesges 
+      description: Create, edit, delete and list custom organization roles. View system organization roles.
+      options:
+         
+           - 'No_Access'
+         
+           - 'Read_only'
+         
+           - 'read-and-write'
+      default: 0
+  - type: dropdown
+    id: Organisation-Custom-properties
+    attributes:
+      label: Organisation Custom properties
+      description: View custom properties, write repository values, and administer definitions.
+      options:
+         
+           - 'No_Access'
+         
+           - 'Read_only'
+         
+           - 'read-and-write'
+           - 'Admin'
+      default: 0
+  - type: dropdown
+    id: Custom-repository-roles
+    attributes:
+      label: Custom repository roles
+      description: Create, edit, delete and list custom repository roles.
+      options:
+         
+           - 'No_Access'
+         
+           - 'Read_only'
+         
+           - 'read-and-write'
+      default: 0
+  - type: dropdown
+    id: Events 
+    attributes:
+      label: Events 
+      description: View events triggered by an activity in an organization.
+      options:
+           - 'No_Access'
+           - 'Read_only'
+      default: 0
+  - type: dropdown
+    id: GitHub-Copilot-Business
+    attributes:
+      label: GitHub Copilot Business
+      description: Manage Copilot Business seats and settings
+      options:
+         
+           - 'No_Access'
+         
+           - 'Read_only'
+         
+           - 'read-and-write'
+      default: 0
+  - type: dropdown
+    id: Members
+    attributes:
+      label: Members
+      description: Organization members and teams.
+      options:
+         
+           - 'No_Access'
+         
+           - 'Read_only'
+         
+           - 'read-and-write'
+      default: 0
+  - type: dropdown
+    id: Organization-announcement-banners 
+    attributes:
+      label: Organization announcement banners 
+      description: View and modify announcement banners for an organization.
+      options:
+         
+           - 'No_Access'
+         
+           - 'Read_only'
+         
+           - 'read-and-write'
+      default: 0
+  - type: dropdown
+    id: Organization-codespaces
+    attributes:
+      label: Organization codespaces
+      description: Manage Codespaces for an organization.
+      options:
+         
+           - 'No_Access'
+         
+           - 'Read_only'
+         
+           - 'read-and-write'
+      default: 0
+  - type: dropdown
+    id: Organization-codespaces-secrets
+    attributes:
+      label: Organization codespaces secrets
+      description: Manage Codespaces Secrets for an organization.
+      options:
+         
+           - 'No_Access'
+         
+           - 'Read_only'
+         
+           - 'read-and-write'
+      default: 0
+  - type: dropdown
+    id: Organization-codespaces-settings 
+    attributes:
+      label: Organization codespaces settings 
+      description: Manage Codespaces settings for an organization.
+      options:
+         
+           - 'No_Access'
+         
+           - 'Read_only'
+         
+           - 'read-and-write'
+      default: 0
+  - type: dropdown
+    id: Organization-dependabot-secrets 
+    attributes:
+      label: Organization dependabot secrets 
+      description: Manage Dependabot organization secrets.
+      options:
+         
+           - 'No_Access'
+         
+           - 'Read_only'
+         
+           - 'read-and-write'
+      default: 0
+  - type: dropdown
+    id: Personal-access-token-requests
+    attributes:
+      label: Personal access token requests
+      description: Manage personal access token requests from organization members.
+      options:
+         
+           - 'No_Access'
+         
+           - 'Read_only'
+         
+           - 'read-and-write'
+      default: 0
+  - type: dropdown
+    id: Personal-access-tokens 
+    attributes:
+      label: Personal access tokens 
+      description: View and revoke personal access tokens that have been granted access to an organization
+      options:
+         
+           - 'No_Access'
+         
+           - 'Read_only'
+         
+           - 'read-and-write'
+      default: 0
+  - type: dropdown
+    id: Plan
+    attributes:
+      label: Plan
+      description: View an organization's plan
+      options:
+         
+           - 'No_Access'
+         
+           - 'Read_only'
+         
+           - 'read-and-write'
+      default: 0
+  - type: dropdown
+    id: Organization-projects
+    attributes:
+      label: Organization Projects
+      description: Manage projects for an organization.
+      options:
+         
+           - 'No_Access'
+         
+           - 'Read_only'
+         
+           - 'read-and-write'
+           - 'Admin'
+      default: 0
+  - type: dropdown
+    id: Organization-Secrets
+    attributes:
+      label: Organization Secrets
+      description: Manage Actions organization secrets.
+      options:
+         
+           - 'No_Access'
+         
+           - 'Read_only'
+         
+           - 'read-and-write'
+      default: 0
+  - type: dropdown
+    id: Self-hosted-runners
+    attributes:
+      label: Self-hosted runners
+      description: View and manage Actions self-hosted runners available to an organization.
+      options:
+         
+           - 'No_Access'
+         
+           - 'Read_only'
+         
+           - 'read-and-write'
+      default: 0
+  - type: dropdown
+    id: Team-discussions
+    attributes:
+      label: Team discussions
+      description: Manage team discussions and related comments.
+      options:
+         
+           - 'No_Access'
+         
+           - 'Read_only'
+         
+           - 'read-and-write'
+      default: 0
+  - type: dropdown
+    id: Organization-Variables
+    attributes:
+      label: Organization Variables
+      description: Manage Actions organization variables.
+      options:
+         
+           - 'No_Access'
+         
+           - 'Read_only'
+         
+           - 'read-and-write'
+      default: 0
+  - type: dropdown
+    id: Organisation-Webhooks
+    attributes:
+      label: Organisation-Webhooks
+      description: Manage the post-receive hooks for an organization.
+      options:
+         
+           - 'No_Access'
+         
+           - 'Read_only'
+         
+           - 'read-and-write'
+      default: 0
+  - type: markdown
+    attributes:
+      value: |
+        ---
+
+  - type: markdown
+    attributes: 
+      value: |
+        ### Webhook Configuration(Optional)
+        Additional information is required if your app contains webhook triggers(optional), please provide the following details, otherwise leave it blank. A working example of GH Webhooks in the CBA environment can be found [here](https://commbank.atlassian.net/wiki/x/wBMVDg)
+
+  - type: input
+    id: Webhook-URL
+    attributes:
+      label: Webhook-URL
+      description: URL to receive webhook events
+      placeholder: ex. https://prod01.redocly.cenegpapiportal01.aws.prod.au.internal.cba/webhooks/github
+
+  - type: input
+    id: Webhook-Secret
+    attributes:
+      label: Webhook Secret
+      description: Generate a secret for the Webhook, and enter the secret under Webhook secret (optional). This secret need to be shared with the Portal team later.
+        Secret can be generated using the command ruby -rsecurerandom -e 'puts SecureRandom.hex(20)'
+      placeholder: ex. SecureRandom.hex(20)
+
+  - type: textarea
+    id: webhook_cidr
+    attributes:
+      label: WebHook CIDR's (Optional, Required if the webhook is load balanced or requires configuiration on the CBA network through our reverse proxy)
+      description: CIDR's for the webhook - important especially if it is load balanced or deployed using ephemeral hosts. If address is static, use <IP>/32
+    validations:
+      required: true
+
+  - type: markdown
+    id: triggers-header
+    attributes:
+        value: |
+         ### Subscribe to Events
+          Please search for the event name in [GitHub documentation](https://docs.github.com/en/webhooks/webhook-events-and-payloads) for full description and payloads.
+
+  - type: checkboxes
+    id: Triggers-issues-pull_requests
+    attributes:
+      label: Issues / Pull Requests
+      description: 
+      options:
+           - label: milestone 
+           - label: issue_comment 
+           - label: issues 
+           - label: merge_group 
+           - label: merge_queue_entry 
+           - label: pull_request 
+           - label: pull_request_review 
+           - label: pull_request_review_comment 
+           - label: pull_request_review_thread 
+  - type: checkboxes
+    id: Triggers-contents
+    attributes:
+      label: Contents
+      description: 
+      options:
+           - label: commit_comment 
+           - label: create 
+           - label: delete 
+           - label: fork 
+           - label: gollum 
+           - label: push 
+           - label: release 
+           - label: repository_dispatch 
+           - label: workflow_dispatch 
+  - type: checkboxes
+    id: Triggers-checks
+    attributes:
+      label: Checks
+      description: 
+      options:
+           - label: check_run 
+           - label: check_suite 
+  - type: checkboxes
+    id: Triggers-metadata
+    attributes:
+      label: Metadata
+      description: 
+      options:
+           - label: installation_target 
+           - label: label 
+           - label: meta 
+           - label: public 
+           - label: repository 
+           - label: star 
+           - label: status 
+           - label: watch 
+  - type: checkboxes
+    id: Triggers-actions-contents
+    attributes:
+      label: Actions
+      description: 
+      options:
+           - label: workflow_job 
+           - label: workflow_run 
+  - type: checkboxes
+    id: Triggers-deployments
+    attributes:
+      label: Deployments / Packages / Pages
+      description: 
+      options:
+           - label: deploy_key 
+           - label: deployment 
+           - label: deployment_protection_rule 
+           - label: deployment_review 
+           - label: deployment_status 
+           - label: registry_package 
+           - label: page_build 
+  - type: checkboxes
+    id: Triggers-discussions
+    attributes:
+      label: Discussions
+      description: 
+      options:
+           - label: discussion 
+           - label: discussion_comment 
+  - type: checkboxes
+    id: Triggers-organization_projects-repository_projects
+    attributes:
+      label: Projects
+      description: 
+      options:
+           - label: project 
+           - label: project_card 
+           - label: project_column 
+           - label: projects_v2
+           - label: projects_v2_item
+           - label: projects_v2_status_update
+  - type: checkboxes
+    id: Triggers-secret_scanning_alerts
+    attributes:
+      label: Security and Alerts
+      description: 
+      options:
+           - label: code_scanning_alert 
+           - label: dependabot_alert 
+           - label: exemption_request_secret_scanning 
+           - label: repository_advisory 
+           - label: secret_scanning_alert 
+           - label: secret_scanning_alert_location 
+           - label: security_advisory 
+  - type: checkboxes
+    id: Triggers-administration-members
+    attributes:
+      label: Administration
+      description: 
+      options:
+           - label: branch_protection_configuration 
+           - label: branch_protection_rule 
+           - label: custom_property 
+           - label: custom_property_values
+           - label: exemption_request_push_ruleset 
+           - label: member 
+           - label: membership
+           - label: organization
+           - label: org_block
+           - label: personal_access_token_request
+           - label: repository_ruleset 
+           - label: security_and_analysis 
+           - label: team
+           - label: team_add
+
+  - type: markdown
+    id: Finished info
+    attributes:
+      value: |
+        Thanks for taking the time to fill in this form. Once reviewed, App Manager can fetch the AppId and generate pem key to create the installation access token.
